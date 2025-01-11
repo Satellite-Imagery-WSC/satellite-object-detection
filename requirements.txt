@@ -6,3 +6,4 @@ seaborn==0.13.2
 scikit-image==0.24.0
 scikit-learn==1.6.0
 tqdm==4.67.1
+labelImg==1.8.6
