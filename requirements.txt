@@ -7,3 +7,6 @@ scikit-image==0.24.0
 scikit-learn==1.6.0
 tqdm==4.67.1
 labelImg==1.8.6
+azure-identity==1.19.0
+azure-mgmt-resource==23.2.0
+azureml-sdk==1.59.0
