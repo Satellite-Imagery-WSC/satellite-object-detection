@@ -403,5 +403,5 @@ FodyWeavers.xsd
 *.jpg
 *.xml
 *.csv
-*.record
+*.tfrecord
 config.yaml
