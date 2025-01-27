@@ -404,4 +404,5 @@ FodyWeavers.xsd
 *.xml
 *.csv
 *.tfrecord
+*.pbtxt
 config.yaml
