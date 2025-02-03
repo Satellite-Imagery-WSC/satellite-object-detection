@@ -406,3 +406,4 @@ FodyWeavers.xsd
 *.tfrecord
 *.pbtxt
 config.yaml
+**/external/
