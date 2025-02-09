@@ -407,3 +407,4 @@ FodyWeavers.xsd
 *.pbtxt
 config.yaml
 **/external/
+**/src/
