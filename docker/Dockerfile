@@ -1,44 +1,37 @@
-# Usa una imagen base de TensorFlow
-FROM tensorflow/tensorflow:2.3.0-gpu
+# Use Ubuntu as base image
+FROM ubuntu:20.04
 
-# Instalar dependencias del sistema
+# Install necessary dependencies
 RUN apt-get update && \
     apt-get install -y \
+    curl \
     git \
     unzip \
     protobuf-compiler \
     build-essential \
     python3-dev \
     python3-pip \
-    cython
+    && rm -rf /var/lib/apt/lists/*
 
-# Crear y activar el entorno virtual de TensorFlow
-RUN python3 -m venv /tensorflow/tf2_api_env
-ENV PATH="/tensorflow/tf2_api_env/bin:$PATH"
+# Clone the TensorFlow Models repository
+RUN git clone --depth 1 https://github.com/tensorflow/models.git
 
-# Instalar TensorFlow
-RUN pip install tensorflow==2.*
+# Download and install protoc 3.13.0 for AMD64
+WORKDIR /tmp
+RUN curl -OL https://github.com/protocolbuffers/protobuf/releases/download/v3.13.0/protoc-3.13.0-linux-x86_64.zip && \
+    unzip protoc-3.13.0-linux-x86_64.zip -d /usr/local && \
+    rm protoc-3.13.0-linux-x86_64.zip
 
-# Clonar el repositorio de TensorFlow Models
-RUN git clone --recurse-submodules https://github.com/tensorflow/models.git
+# Verify installation
+RUN protoc --version
 
-# Establecer el directorio correcto para compilar los archivos .proto
-WORKDIR /tensorflow/models/research
+# Change to root directory
+WORKDIR /
 
-# Compilar los archivos .proto
-RUN protoc object_detection/protos/*.proto --python_out=.
+# Install Cython and clone COCO API repository
+RUN pip install cython && \
+    git clone --depth 1 https://github.com/cocodataset/cocoapi.git
 
-# Instalar la API COCO
-RUN pip install cython
-RUN git clone https://github.com/cocodataset/cocoapi.git
-WORKDIR /tensorflow/models/research/cocoapi/PythonAPI
-RUN make
-RUN cp -r pycocotools /tensorflow/models/research/
-
-# Instalar la API de Object Detection
-WORKDIR /tensorflow/models/research
-RUN cp object_detection/packages/tf2/setup.py .
-RUN python -m pip install .
-
-# Realizar limpieza de dependencias no necesarias
-RUN apt-get purge -y --auto-remove git unzip build-essential python3-dev
+# Compile COCO API and copy pycocotools to models/research
+WORKDIR /cocoapi/PythonAPI/
+RUN make && cp -r pycocotools /models/research/
