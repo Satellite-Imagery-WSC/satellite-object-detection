@@ -1,6 +1,8 @@
 # Use Ubuntu as the base image
 FROM ubuntu:20.04
 
+ENV DEBIAN_FRONTEND=noninteractive
+
 # Install necessary dependencies
 RUN apt-get update && \
     apt-get install -y \
@@ -12,6 +14,8 @@ RUN apt-get update && \
     python3 \
     python3-dev \
     python3-pip \
+    libgl1 \
+    libglib2.0-0 \
     && rm -rf /var/lib/apt/lists/*
 
 # Create an alias for python from python3
@@ -20,11 +24,14 @@ RUN ln -s /usr/bin/python3 /usr/bin/python
 # Install TensorFlow 2.*
 RUN python3 -m pip install --no-cache-dir "tensorflow==2.13.0"
 
-# Install TensorFlow, TensorFlow-Text, and TensorFlow-Models-Official
+RUN python3 -m pip install --upgrade pip setuptools setuptools-scm==7.1.0
+
+# Install TensorFlow, TensorFlow-Text, TensorFlow-Models-Official and pyglib
 RUN python3 -m pip install \
     tensorflow-text==2.13.0 \
     tensorflow-model-optimization==0.8.0 \
-    tf-models-official==2.13.1
+    tf-models-official==2.13.1 \
+    pyglib
 
 # Clone the TensorFlow Models repository (Commit on Feb 18, 2025)
 RUN git clone --branch master \
